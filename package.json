@@ -1,0 +1,34 @@
+{
+  "name": "cyclesaving",
+  "version": "1.0.0",
+  "description": "Cycle Saving app",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "server": "nodemon server.js"
+  },
+  "author": "Baker",
+  "license": "MIT",
+  "dependencies": {
+    "apollo-server-express": "^1.3.6",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.18.3",
+    "data-type": "^0.1.3",
+    "express": "^4.16.3",
+    "express-graphql": "^0.6.12",
+    "graphql": "^0.13.2",
+    "graphql-tools": "^3.0.2",
+    "jsonwebtoken": "^8.2.2",
+    "mysql": "^2.15.0",
+    "passport": "^0.4.0",
+    "passport-jwt": "^4.0.0",
+    "pg": "^7.4.3",
+    "pg-promise": "^8.4.4",
+    "sequelize": "^4.37.10",
+    "validator": "^10.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.17.5"
+  }
+}
