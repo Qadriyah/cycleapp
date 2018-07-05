@@ -11,6 +11,6 @@ module.exports = {
       idel: 10000
     }
   },
-  //pgURI: "postgres://becks:snOOkg@localhost:5432/cycledb",
-  port: process.env.PORT || 5000
+  port: process.env.PORT || 5000,
+  secretKey: "mukungu"
 };

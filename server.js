@@ -1,6 +1,7 @@
 const express = require("express");
 const graphqlHttp = require("express-graphql");
 const bodyParser = require("body-parser");
+const passport = require("passport");
 
 // Database configuration file
 const config = require("./config/config");
@@ -32,6 +33,12 @@ config.sequelize.sync();
 // Use routes
 app.use("/cycleapp/members", members);
 app.use("/cycleapp/users", users);
+
+// Passport middleware
+app.use(passport.initialize());
+
+// Passport config
+require("./config/passport")(passport);
 
 // Graphql middleware
 app.use(
