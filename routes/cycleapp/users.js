@@ -20,7 +20,9 @@ router.post("/new-user", (request, response) => {
     } else {
       // Create new user
       const newUser = {
-        memberId: request.body.mid,
+        firstName: request.body.fname,
+        lastName: request.body.lname,
+        userRole: request.body.role,
         userName: request.body.uname,
         password: request.body.pass
       };

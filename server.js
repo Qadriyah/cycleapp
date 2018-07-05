@@ -7,7 +7,6 @@ const passport = require("passport");
 const config = require("./config/config");
 
 // Load routes
-const members = require("./routes/cycleapp/members");
 const users = require("./routes/cycleapp/users");
 
 const schema = require("./schema");
@@ -31,7 +30,6 @@ config.sequelize
 config.sequelize.sync();
 
 // Use routes
-app.use("/cycleapp/members", members);
 app.use("/cycleapp/users", users);
 
 // Passport middleware
