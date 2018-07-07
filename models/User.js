@@ -37,6 +37,10 @@ const UserSchema = config.sequelize.define("users", {
     type: config.Sequelize.INTEGER,
     defaultValue: 0
   },
+  userTitle: {
+    type: config.Sequelize.STRING,
+    require: true
+  },
   dateCreated: {
     type: config.Sequelize.DATE,
     defaultValue: config.Sequelize.NOW

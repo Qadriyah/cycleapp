@@ -3,7 +3,6 @@ let person = {};
 const members = [];
 let member = {};
 const db = {};
-const MemberSchema = require("./models/Member");
 
 const resolvers = {
   Query: {
@@ -15,17 +14,7 @@ const resolvers = {
       return members;
     }
   },
-  Mutation: {
-    createPerson: async (_, input) => {
-      return await MemberSchema.create(input);
-    },
-
-    getPerson: ({ id }) => {
-      return people.find(person => {
-        person.personId === id;
-      });
-    }
-  }
+  Mutation: {}
 };
 
 module.exports = resolvers;

@@ -4,6 +4,8 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const keys = require("../../config/keys");
 const password = require("passport");
+const validateRegisterInput = require("../../validation/register");
+const validateLoginInput = require("../../validation/login");
 
 // Load the User model
 const UserSchema = require("../../models/User");
@@ -12,11 +14,21 @@ const UserSchema = require("../../models/User");
 // @desc    Registers a new user
 // @access  Private
 router.post("/new-user", (request, response) => {
+  const { errors, isTrue } = validateRegisterInput(request.body);
+
+  // Check validations
+  if (!isTrue) {
+    return response.status(400).json(errors);
+  }
+
+  // Check if user already exists
   UserSchema.findOne({
-    where: { userName: request.body.uname, statusFlag: 0 }
+    where: { userName: request.body.uname }
   }).then(user => {
     if (user) {
-      return response.status(400).json({ msg: "Username already exists" });
+      // User already exists
+      errors.msg = "Username already exists";
+      return response.status(400).json(errors);
     } else {
       // Create new user
       const newUser = {
@@ -24,11 +36,17 @@ router.post("/new-user", (request, response) => {
         lastName: request.body.lname,
         userRole: request.body.role,
         userName: request.body.uname,
-        password: request.body.pass
+        password: request.body.pass,
+        gender: request.body.gender,
+        userTitle: request.body.utitle
       };
 
       // Generate a password hash
       bcrypt.genSalt(15, (err, salt) => {
+        if (err) {
+          return response.status(400).json(err);
+        }
+
         bcrypt.hash(newUser.password, salt, (err, hash) => {
           if (err) throw err;
           newUser.password = hash;
@@ -49,13 +67,20 @@ router.post("/new-user", (request, response) => {
 // @desc    Login user
 // @access  Public
 router.post("/login", (request, response) => {
+  const { errors, isTrue } = validateLoginInput(request.body);
+
+  // Check for validation
+  if (!isTrue) {
+    return response.status(400).json(errors);
+  }
   const password = request.body.pass;
   const username = request.body.uname;
 
   // Check if user exists
   UserSchema.findOne({ where: { userName: username } }).then(user => {
     if (!user) {
-      return response.status(404).json({ username: "Username does not exist" });
+      errors.username = "Username does not exist";
+      return response.status(404).json(errors);
     }
 
     // Check if password match
@@ -96,8 +121,11 @@ router.get(
   (request, response) => {
     response.json({
       uid: request.user.id,
+      title: request.user.userTitle,
+      fullName: request.user.lastName + " " + request.user.firstName,
       uname: request.user.userName,
-      statusFlag: request.user.statusFlag
+      statusFlag: request.user.statusFlag,
+      role: request.user.userRole
     });
   }
 );
