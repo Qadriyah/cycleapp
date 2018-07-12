@@ -1,14 +1,25 @@
 const config = require("../config/config");
 
 // Create schema
-const UserSchema = config.sequelize.define("users", {
-  /* memberId: {
+const MemberSchema = config.sequelize.define("members", {
+  createdBy: {
     type: config.Sequelize.INTEGER,
     references: {
       model: "members",
       key: "id"
     }
-  }, */
+  },
+  cycleId: {
+    type: config.Sequelize.INTEGER,
+    references: {
+      model: "cycles",
+      key: "id"
+    }
+  },
+  cycleFlag: {
+    type: config.Sequelize.INTEGER,
+    defaultValue: 0
+  },
   firstName: {
     type: config.Sequelize.STRING,
     require: true
@@ -47,4 +58,7 @@ const UserSchema = config.sequelize.define("users", {
   }
 });
 
-module.exports = UserSchema;
+// Create associations
+MemberSchema.hasMany(MemberSchema, { foreignKey: "createdBy" });
+
+module.exports = MemberSchema;

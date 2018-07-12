@@ -4,6 +4,10 @@ const isEmpty = require("./is-empty");
 module.exports = function validateRegisterInput(data) {
   let errors = {};
 
+  data.fname = !isEmpty(data.fname) ? data.fname : "";
+  data.lname = !isEmpty(data.lname) ? data.lname : "";
+  data.uname = !isEmpty(data.uname) ? data.uname : "";
+
   if (Validator.isEmpty(data.fname)) {
     errors.fname = "The FirstName cannot be empty";
   }

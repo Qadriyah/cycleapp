@@ -7,7 +7,8 @@ const passport = require("passport");
 const config = require("./config/config");
 
 // Load routes
-const users = require("./routes/cycleapp/users");
+const members = require("./routes/cycleapp/members");
+const cycles = require("./routes/cycleapp/cycles");
 
 const schema = require("./schema");
 
@@ -26,11 +27,12 @@ config.sequelize
   .then(() => console.log("Database connection successful"))
   .catch(err => console.log(err));
 
+// Use routes
+app.use("/cycleapp/members", members);
+app.use("/cycleapp/cycles", cycles);
+
 // Sync all models
 config.sequelize.sync();
-
-// Use routes
-app.use("/cycleapp/users", users);
 
 // Passport middleware
 app.use(passport.initialize());

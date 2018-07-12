@@ -4,11 +4,14 @@ const isEmpty = require("./is-empty");
 module.exports = function validateLoginInput(data) {
   let errors = {};
 
+  data.uname = !isEmpty(data.uname) ? data.uname : "";
+  data.pass = !isEmpty(data.pass) ? data.pass : "";
+
   if (Validator.isEmpty(data.uname)) {
     errors.uname = "The UserName cannot be empty";
   }
 
-  if (!Validator.isLength(data.pass, { min: 7, max: 255 })) {
+  if (!Validator.isLength(data.pass, { min: 8, max: 255 })) {
     errors.pass = "Wrong password";
   }
 
