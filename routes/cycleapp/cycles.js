@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const passport = require("passport");
+const dateFormat = require("dateformat");
 
 // Load cycle model
 const CycleSchema = require("../../models/Cycle");
@@ -12,16 +13,25 @@ router.post(
   "/new-cycle",
   passport.authenticate("jwt", { session: false }),
   (request, response) => {
+    require("datejs");
     const errors = {};
     // Check validations
 
     // Create new cycle
     const newCycle = {};
-    if (request.body.desc) newCycle.description = request.body.desc;
+    if (request.body.sdate) newCycle.startDate = request.body.sdate;
+    if (request.body.clength) newCycle.cycleLength = request.body.clength;
     if (request.body.amount) newCycle.amount = request.body.amount;
 
+    // Caculate the end date of the cycle
+    const startDate = new Date(request.body.sdate);
+    const endDate = new Date(startDate)
+      .add(Number(request.body.clength))
+      .months();
+    newCycle.endDate = new Date(endDate).addDays(-1);
+
     // Check if cycle already exists
-    CycleSchema.findOne({ where: { description: request.body.desc } }).then(
+    CycleSchema.findOne({ where: { startDate: request.body.sdate } }).then(
       cycle => {
         if (cycle) {
           // Update cycle
@@ -33,12 +43,28 @@ router.post(
               response.json(err);
             });
         } else {
-          // Create new cycle
-          CycleSchema.create(newCycle)
-            .then(cycle => {
-              response.json(cycle);
-            })
-            .catch(err => response.json(err));
+          CycleSchema.findOne({ where: { current: true } }).then(ncycle => {
+            if (
+              startDate.isBefore(new Date(ncycle.endDate)) ||
+              startDate.equals(new Date(ncycle.endDate))
+            ) {
+              return response.status(401).json({ msg: "Wrong date" });
+            }
+            // Make current false for the previous cycle
+            bcycle = {};
+            bcycle.current = false;
+            CycleSchema.update(bcycle, { where: { id: ncycle.id } })
+              .then(result => {
+                if (result) {
+                  CycleSchema.create(newCycle)
+                    .then(cycle => {
+                      response.json(cycle);
+                    })
+                    .catch(err => response.json(err));
+                }
+              })
+              .catch(err => response.json(err));
+          });
         }
       }
     );

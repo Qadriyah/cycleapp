@@ -23,28 +23,32 @@ router.post(
     if (!isTrue) {
       return response.status(400).json(errors);
     }
+    // Create new member
+    const newMember = {};
+    newMember.createdBy = request.user.id;
+    if (request.body.fname) newMember.firstName = request.body.fname;
+    if (request.body.lname) newMember.lastName = request.body.lname;
+    if (request.body.role) newMember.userRole = request.body.role;
+    if (request.body.uname) newMember.userName = request.body.uname;
+    if (request.body.pass) newMember.password = request.body.pass;
+    if (request.body.gender) newMember.gender = request.body.gender;
+    if (request.body.utitle) newMember.userTitle = request.body.utitle;
 
     // Check if member already exists
     MemberSchema.findOne({
       where: { userName: request.body.uname }
     }).then(member => {
       if (member) {
-        // Member already exists
-        errors.msg = "Username already exists";
-        return response.status(400).json(errors);
+        // Update member
+        const editMember = {};
+        editMember.cycleId = request.body.cycle;
+        editMember.cycleFlag = request.body.flag;
+        MemberSchema.update(editMember, { where: { id: member.id } })
+          .then(result => {
+            response.json(result);
+          })
+          .catch(err => response.json(err));
       } else {
-        // Create new member
-        const newMember = {
-          createdBy: request.user.id,
-          firstName: request.body.fname,
-          lastName: request.body.lname,
-          userRole: request.body.role,
-          userName: request.body.uname,
-          password: request.body.pass,
-          gender: request.body.gender,
-          userTitle: request.body.utitle
-        };
-
         // Generate a password hash
         bcrypt.genSalt(15, (err, salt) => {
           if (err) {
@@ -117,7 +121,16 @@ router.post("/login", (request, response) => {
   });
 });
 
-// @router  GET cycleapp/users/current-user
+// @router  GET cycleapp/cycle-members
+// @desc    Adds members to a cycle
+// @access  Private
+router.post(
+  "/cycle-members",
+  passport.authenticate("jwt", { session: false }),
+  (request, response) => {}
+);
+
+// @router  GET cycleapp/members/current-member
 // @desc    Returns the current user
 // @access  Private
 router.get(

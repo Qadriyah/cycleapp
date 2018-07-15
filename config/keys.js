@@ -9,7 +9,8 @@ module.exports = {
       min: 0,
       acquire: 30000,
       idel: 10000
-    }
+    },
+    sync: true
   },
   port: process.env.PORT || 5000,
   secretKey: "mukungu"
