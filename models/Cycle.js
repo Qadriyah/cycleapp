@@ -1,18 +1,19 @@
 const config = require("../config/config");
-const MemberSchema = require("./Member");
+const SemesterSchema = require("./Semester");
+const ContributionSchema = require("./Contribution");
 
 // Create schema
 const CycleSchema = config.sequelize.define("cycles", {
+  description: {
+    type: config.Sequelize.STRING,
+    required: true
+  },
   startDate: {
     type: config.Sequelize.DATEONLY,
     required: true
   },
   endDate: {
     type: config.Sequelize.DATEONLY,
-    required: true
-  },
-  cycleLength: {
-    type: config.Sequelize.INTEGER,
     required: true
   },
   amount: {
@@ -26,6 +27,7 @@ const CycleSchema = config.sequelize.define("cycles", {
 });
 
 // Create associations
-CycleSchema.hasMany(MemberSchema, { foreignKey: "cycleId" });
+CycleSchema.hasMany(SemesterSchema, { foreignKey: "cycleId" });
+CycleSchema.hasMany(ContributionSchema, { foreignKey: "cycleId" });
 
 module.exports = CycleSchema;

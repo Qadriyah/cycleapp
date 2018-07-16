@@ -44,26 +44,34 @@ router.post(
             });
         } else {
           CycleSchema.findOne({ where: { current: true } }).then(ncycle => {
-            if (
-              startDate.isBefore(new Date(ncycle.endDate)) ||
-              startDate.equals(new Date(ncycle.endDate))
-            ) {
-              return response.status(401).json({ msg: "Wrong date" });
+            if (ncycle) {
+              if (
+                startDate.isBefore(new Date(ncycle.endDate)) ||
+                startDate.equals(new Date(ncycle.endDate))
+              ) {
+                return response.status(401).json({ msg: "Wrong date" });
+              }
+              // Make current false for the previous cycle
+              bcycle = {};
+              bcycle.current = false;
+              CycleSchema.update(bcycle, { where: { id: ncycle.id } })
+                .then(result => {
+                  if (result) {
+                    CycleSchema.create(newCycle)
+                      .then(cycle => {
+                        response.json(cycle);
+                      })
+                      .catch(err => response.json(err));
+                  }
+                })
+                .catch(err => response.json(err));
+            } else {
+              CycleSchema.create(newCycle)
+                .then(cycle => {
+                  response.json(cycle);
+                })
+                .catch(err => response.json(err));
             }
-            // Make current false for the previous cycle
-            bcycle = {};
-            bcycle.current = false;
-            CycleSchema.update(bcycle, { where: { id: ncycle.id } })
-              .then(result => {
-                if (result) {
-                  CycleSchema.create(newCycle)
-                    .then(cycle => {
-                      response.json(cycle);
-                    })
-                    .catch(err => response.json(err));
-                }
-              })
-              .catch(err => response.json(err));
           });
         }
       }

@@ -1,4 +1,6 @@
 const config = require("../config/config");
+const ContributionSchema = require("./Contribution");
+const GraduationSchema = require("./Graduation");
 
 // Create schema
 const MemberSchema = config.sequelize.define("members", {
@@ -7,38 +9,38 @@ const MemberSchema = config.sequelize.define("members", {
     references: {
       model: "members",
       key: "id"
-    }
+    },
+    onDelete: "cascade",
+    onUpdate: "cascade"
   },
-  cycleId: {
+  semesterId: {
     type: config.Sequelize.INTEGER,
     references: {
-      model: "cycles",
+      model: "semesters",
       key: "id"
-    }
-  },
-  cycleFlag: {
-    type: config.Sequelize.INTEGER,
-    defaultValue: 0
+    },
+    onDelete: "cascade",
+    onUpdate: "cascade"
   },
   firstName: {
     type: config.Sequelize.STRING,
-    require: true
+    required: true
   },
   lastName: {
     type: config.Sequelize.STRING,
-    require: true
+    required: true
   },
   gender: {
     type: config.Sequelize.STRING,
-    require: true
+    required: true
   },
   userName: {
     type: config.Sequelize.STRING,
-    require: true
+    required: true
   },
   password: {
     type: config.Sequelize.STRING,
-    require: true
+    required: true
   },
   statusFlag: {
     type: config.Sequelize.INTEGER,
@@ -50,7 +52,7 @@ const MemberSchema = config.sequelize.define("members", {
   },
   userTitle: {
     type: config.Sequelize.STRING,
-    require: true
+    required: true
   },
   dateCreated: {
     type: config.Sequelize.DATE,
@@ -60,5 +62,7 @@ const MemberSchema = config.sequelize.define("members", {
 
 // Create associations
 MemberSchema.hasMany(MemberSchema, { foreignKey: "createdBy" });
+MemberSchema.hasMany(ContributionSchema, { foreignKey: "memberId" });
+MemberSchema.hasMany(GraduationSchema, { foreignKey: "memberId" });
 
 module.exports = MemberSchema;

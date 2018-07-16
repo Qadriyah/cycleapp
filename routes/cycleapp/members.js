@@ -2,8 +2,9 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const keys = require("../../config/keys");
 const passport = require("passport");
+
+const keys = require("../../config/keys");
 const validateRegisterInput = require("../../validation/register");
 const validateLoginInput = require("../../validation/login");
 
@@ -127,7 +128,12 @@ router.post("/login", (request, response) => {
 router.post(
   "/cycle-members",
   passport.authenticate("jwt", { session: false }),
-  (request, response) => {}
+  (request, response) => {
+    // Check for validation
+
+    // Get form fields
+    const cycleFields = {};
+  }
 );
 
 // @router  GET cycleapp/members/current-member
