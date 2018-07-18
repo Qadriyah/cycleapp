@@ -5,11 +5,13 @@ const jwt = require("jsonwebtoken");
 const passport = require("passport");
 
 const keys = require("../../config/keys");
+const config = require("../../config/config");
 const validateRegisterInput = require("../../validation/register");
 const validateLoginInput = require("../../validation/login");
 
-// Load the User model
+// Load models
 const MemberSchema = require("../../models/Member");
+const SemesterSchema = require("../../models/Semester");
 
 // @router  POST cycleapp/users/new-user
 // @desc    Registers a new user
@@ -129,10 +131,32 @@ router.post(
   "/cycle-members",
   passport.authenticate("jwt", { session: false }),
   (request, response) => {
+    const errors = {};
     // Check for validation
 
     // Get form fields
     const cycleFields = {};
+    cycleFields.semesterId = request.body.semester;
+
+    // Check if semester is full
+    MemberSchema.findAll({
+      raw: true,
+      attributes: [
+        [config.sequelize.fn("COUNT", config.sequelize.col("*")), "no_rows"]
+      ],
+      where: { semesterId: request.body.semester }
+    }).then(rows => {
+      if (rows[0].no_rows === "2") {
+        errors.semester = "No more slots";
+        response.json(errors);
+      } else {
+        MemberSchema.update(cycleFields, {
+          where: { id: request.body.member }
+        }).then(result => {
+          response.json({ msg: "Success" });
+        });
+      }
+    });
   }
 );
 

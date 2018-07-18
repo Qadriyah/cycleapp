@@ -17,9 +17,8 @@ const SemesterSchema = config.sequelize.define("semesters", {
     type: config.Sequelize.STRING,
     required: true
   },
-  amount: {
-    type: config.Sequelize.INTEGER,
-    required: true
+  capacity: {
+    type: config.Sequelize.INTEGER
   }
 });
 

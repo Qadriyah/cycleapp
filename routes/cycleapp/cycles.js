@@ -3,8 +3,10 @@ const router = express.Router();
 const passport = require("passport");
 const dateFormat = require("dateformat");
 
-// Load cycle model
+// Load models
 const CycleSchema = require("../../models/Cycle");
+const SemesterSchema = require("../../models/Semester");
+const MemberSchema = require("../../models/Member");
 
 // @router  POST cycleapp/cycles/new-cycle
 // @desc    Registers a new cycle
@@ -19,8 +21,10 @@ router.post(
 
     // Create new cycle
     const newCycle = {};
+    if (request.body.desc) newCycle.description = request.body.desc;
     if (request.body.sdate) newCycle.startDate = request.body.sdate;
-    if (request.body.clength) newCycle.cycleLength = request.body.clength;
+    if (request.body.capacity) newCycle.capacity = request.body.capacity;
+    if (request.body.sems) newCycle.monthlySemesters = request.body.sems;
     if (request.body.amount) newCycle.amount = request.body.amount;
 
     // Caculate the end date of the cycle
@@ -31,7 +35,7 @@ router.post(
     newCycle.endDate = new Date(endDate).addDays(-1);
 
     // Check if cycle already exists
-    CycleSchema.findOne({ where: { startDate: request.body.sdate } }).then(
+    CycleSchema.findOne({ where: { description: request.body.desc } }).then(
       cycle => {
         if (cycle) {
           // Update cycle
@@ -87,7 +91,20 @@ router.get(
   passport.authenticate("jwt", { session: false }),
   (request, response) => {
     CycleSchema.findOne({
-      where: { current: true }
+      where: { current: true },
+      include: [
+        {
+          model: SemesterSchema,
+          required: true,
+          attributes: ["id", "description", "capacity"],
+          include: [
+            {
+              model: MemberSchema,
+              attributes: ["firstName", "lastName", "userTitle"]
+            }
+          ]
+        }
+      ]
     }).then(cycle => {
       response.json(cycle);
     });
