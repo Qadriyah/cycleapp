@@ -10,6 +10,7 @@ const config = require("./config/config");
 const members = require("./routes/cycleapp/members");
 const cycles = require("./routes/cycleapp/cycles");
 const semesters = require("./routes/cycleapp/semesters");
+const contributions = require("./routes/cycleapp/contributions");
 
 const schema = require("./schema");
 
@@ -32,6 +33,7 @@ config.sequelize
 app.use("/cycleapp/members", members);
 app.use("/cycleapp/cycles", cycles);
 app.use("/cycleapp/semesters", semesters);
+app.use("/cycleapp/contributions", contributions);
 
 // Sync all models
 config.sequelize.sync();

@@ -1,12 +1,14 @@
 const express = require("express");
 const router = express.Router();
 const passport = require("passport");
+const config = require("../../config/config");
 const dateFormat = require("dateformat");
 
 // Load models
 const CycleSchema = require("../../models/Cycle");
 const SemesterSchema = require("../../models/Semester");
 const MemberSchema = require("../../models/Member");
+const ContributionSchema = require("../../models/Contribution");
 
 // @router  POST cycleapp/cycles/new-cycle
 // @desc    Registers a new cycle
@@ -90,23 +92,32 @@ router.get(
   "/currentcycle",
   passport.authenticate("jwt", { session: false }),
   (request, response) => {
-    CycleSchema.findOne({
-      where: { current: true },
-      include: [
-        {
-          model: SemesterSchema,
-          required: true,
-          attributes: ["id", "description", "capacity"],
-          include: [
-            {
-              model: MemberSchema,
-              attributes: ["firstName", "lastName", "userTitle"]
-            }
-          ]
-        }
-      ]
-    }).then(cycle => {
-      response.json(cycle);
+    CycleSchema.findOne({ where: { current: true } }).then(cycle => {
+      CycleSchema.findOne({
+        where: { id: cycle.id },
+        include: [
+          {
+            model: SemesterSchema,
+            required: true,
+            attributes: ["id", "description", "capacity"],
+            include: [
+              {
+                model: MemberSchema,
+                attributes: ["firstName", "lastName", "userTitle"],
+                include: [
+                  {
+                    model: ContributionSchema,
+                    attributes: ["cycleId", "amount", "datePaid"],
+                    where: { cycleId: cycle.id }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }).then(cycle => {
+        response.json(cycle);
+      });
     });
   }
 );

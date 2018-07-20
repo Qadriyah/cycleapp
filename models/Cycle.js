@@ -19,7 +19,7 @@ const CycleSchema = config.sequelize.define("cycles", {
   capacity: {
     type: config.Sequelize.INTEGER
   },
-  monthlySemesters: {
+  numOfSems: {
     type: config.Sequelize.INTEGER
   },
   amount: {
