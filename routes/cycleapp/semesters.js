@@ -65,6 +65,8 @@ router.post(
               startDate.getFullYear() +
               " " +
               request.body.desc;
+            newSemester.current = true;
+            newSemester.semesterNum = 1;
             SemesterSchema.create(newSemester)
               .then(semester => {
                 response.json(semester);
@@ -83,6 +85,7 @@ router.post(
               startDate.getFullYear() +
               " " +
               request.body.desc;
+            newSemester.semesterNum = 2;
             SemesterSchema.create(newSemester)
               .then(semester => {
                 response.json(semester);
@@ -101,6 +104,7 @@ router.post(
               endDate.getFullYear() +
               " " +
               request.body.desc;
+            newSemester.semesterNum = 3;
             SemesterSchema.create(newSemester)
               .then(semester => {
                 response.json(semester);
@@ -119,6 +123,7 @@ router.post(
               endDate.getFullYear() +
               " " +
               request.body.desc;
+            newSemester.semesterNum = 4;
             SemesterSchema.create(newSemester)
               .then(semester => {
                 response.json(semester);

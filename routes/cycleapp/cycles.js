@@ -103,7 +103,7 @@ router.get(
             include: [
               {
                 model: MemberSchema,
-                attributes: ["firstName", "lastName", "userTitle"],
+                attributes: ["id", "firstName", "lastName", "userTitle"],
                 include: [
                   {
                     model: ContributionSchema,

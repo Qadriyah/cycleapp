@@ -19,6 +19,13 @@ const SemesterSchema = config.sequelize.define("semesters", {
   },
   capacity: {
     type: config.Sequelize.INTEGER
+  },
+  current: {
+    type: config.Sequelize.BOOLEAN,
+    defaultValue: false
+  },
+  semesterNum: {
+    type: config.Sequelize.INTEGER
   }
 });
 

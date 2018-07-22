@@ -11,6 +11,7 @@ const members = require("./routes/cycleapp/members");
 const cycles = require("./routes/cycleapp/cycles");
 const semesters = require("./routes/cycleapp/semesters");
 const contributions = require("./routes/cycleapp/contributions");
+const graduations = require("./routes/cycleapp/graduations");
 
 const schema = require("./schema");
 
@@ -34,6 +35,7 @@ app.use("/cycleapp/members", members);
 app.use("/cycleapp/cycles", cycles);
 app.use("/cycleapp/semesters", semesters);
 app.use("/cycleapp/contributions", contributions);
+app.use("/cycleapp/graduations", graduations);
 
 // Sync all models
 config.sequelize.sync();
@@ -45,12 +47,12 @@ app.use(passport.initialize());
 require("./config/passport")(passport);
 
 // Graphql middleware
-app.use(
+/* app.use(
   "/graphql",
   graphqlHttp({
     schema: schema,
     graphiql: true
   })
-);
+); */
 
 app.listen(port, () => console.log(`Server running on port ${port}`));
